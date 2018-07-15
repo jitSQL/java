@@ -17,7 +17,7 @@ public class Parser {
 		
 		// Convert to a char array for efficiency
 		char[] cmd = reader.readLine().toCharArray();
-		long startTime = System.currentTimeMillis();
+		
 		// We use a Trie to pattern match reserved words
 		Trie data = new Trie();
 		
@@ -41,7 +41,7 @@ public class Parser {
 		
 		int start = 0;
 		int end = 0;
-		
+		long startTime = System.currentTimeMillis();
 		// Continue looping through the entire input until we parse all of it
 		while (start < cmd.length && end < cmd.length) {
 			//System.out.println(cmd.length);
@@ -117,6 +117,6 @@ class Tuple {
 	}
 	
 	public String toString() {
-		return "" + start + "" + this.end + "" + this.type;
+		return "|" + start + ", " + this.end + ", S" + this.type + "|";
 	}
 }
