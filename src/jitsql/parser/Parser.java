@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
 
 import jitsql.parser.trie.Trie;
@@ -11,22 +12,28 @@ import jitsql.parser.trie.Trie;
 public class Parser {
 	public static void main(String[] args) throws IOException {
 		
+		// Take input
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		
+		// Convert to a char array for efficiency
 		char[] cmd = reader.readLine().toCharArray();
 		
+		// We use a Trie to pattern match reserved words
 		Trie data = new Trie();
 		
+		// Hash table serves as a category reference
 		Hashtable<String, Integer> h = new Hashtable<String, Integer>();
 		
+		// we store each match as a Tuple of start, end indices and the category
 		ArrayList<Tuple> matches = new ArrayList<Tuple>();
 		
+		// Add our vocabulary to category conversion to the hash map
 		h.put("SELECT", 1);
 		h.put("FROM", 2);
 		h.put("WHERE", 3);
 		h.put("JEFE", Integer.MAX_VALUE);
 		h.put("STRING", 5);
-		
+		// Add our vocab to Trie matcher
 		data.insert("SELECT");
 		data.insert("FROM");
 		data.insert("WHERE");
@@ -34,43 +41,53 @@ public class Parser {
 		
 		int start = 0;
 		int end = 0;
-		while (start < cmd.length) {
+		
+		// Continue looping through the entire input until we parse all of it
+		while (start < cmd.length && end < cmd.length) {
 			
-			if (cmd[start] == '\"') {
+			// Edge case checker for strings - non reserved words
+			if (cmd[start] == '"') {
 				end = start + 1;
 				while (true) {
-					if (cmd[end] == '\"') break;
+					System.out.println(cmd[end]);
+					if (cmd[end] == '"') break;
 					else end++;
 				}
-				matches.add(new Tuple(start, end, 5));
+				// don't include quotations
+				matches.add(new Tuple(start + 1, end - 1, 5));
 			} else {
+				// look for reserved words
+				
 				boolean match = false;
-				String build = "";
-				while (!match) {				
+				
+				while (!match) {	
+					String build = "";
+					// Inefficient - build our search string
 					for (int i = start; i < end; i++) {
-						if (end > cmd.length) break;
+						if (end > cmd.length) {
+							match = true;
+							break;
+						}
 						build += cmd[i];
 					}
-					
+					// search for the string in the trie
 					if (data.search(build)) {
 						match = true;
-						
+						// if we've found the string, add a new Tuple and stop looping
 						int type = h.get(build);
 						Tuple t = new Tuple(start, end, type);
 						
 						matches.add(t);
-						
-						start = end;
 						break;
-					}
-					
-					if (build.length() > 6) {
-						
 					}
 					end++;
 				}
 			}
+			// Increment to the next char
+			start = end + 1;
 		}
+		
+		System.out.println(matches.toString());
 	}
 }
 
@@ -82,5 +99,9 @@ class Tuple {
 		this.start = start;
 		this.end = end;
 		this.type = type;
+	}
+	
+	public String toString() {
+		return "" + start + "" + this.end + "" + this.type;
 	}
 }
