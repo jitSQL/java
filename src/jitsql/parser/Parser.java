@@ -17,7 +17,7 @@ public class Parser {
 		
 		// Convert to a char array for efficiency
 		char[] cmd = reader.readLine().toCharArray();
-		
+		long startTime = System.currentTimeMillis();
 		// We use a Trie to pattern match reserved words
 		Trie data = new Trie();
 		
@@ -44,17 +44,25 @@ public class Parser {
 		
 		// Continue looping through the entire input until we parse all of it
 		while (start < cmd.length && end < cmd.length) {
+			//System.out.println(cmd.length);
+			//System.out.println("STARTNUM: " + start);
+			//System.out.println("ENDNUM: " + end);
 			
+			//System.out.println(cmd[start]);
 			// Edge case checker for strings - non reserved words
 			if (cmd[start] == '"') {
-				end = start + 1;
 				while (true) {
-					System.out.println(cmd[end]);
-					if (cmd[end] == '"') break;
+					//System.out.println("START " + cmd[start]);
+					//System.out.println("END " + cmd[end]);
+					if (cmd[end] == '"') {
+						end++;
+						break;
+					}
 					else end++;
 				}
 				// don't include quotations
 				matches.add(new Tuple(start + 1, end - 1, 5));
+				//System.out.println(matches.toString());
 			} else {
 				// look for reserved words
 				
@@ -70,6 +78,10 @@ public class Parser {
 						}
 						build += cmd[i];
 					}
+					//System.out.println("BUILD: " + build);
+					if (build.equals(" ")) {
+						break;
+					}
 					// search for the string in the trie
 					if (data.search(build)) {
 						match = true;
@@ -79,15 +91,18 @@ public class Parser {
 						
 						matches.add(t);
 						break;
+					} else {
+						end++;
 					}
-					end++;
 				}
 			}
 			// Increment to the next char
-			start = end + 1;
+			start = end;
+			end = start + 1;
 		}
 		
 		System.out.println(matches.toString());
+		System.out.println("Took " + (System.currentTimeMillis() - startTime) + " ms");
 	}
 }
 
