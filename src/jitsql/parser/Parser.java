@@ -1,10 +1,7 @@
 package jitsql.parser;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Hashtable;
 
 import jitsql.parser.trie.Trie;
@@ -44,7 +41,7 @@ public class Parser {
 		long startTime = System.currentTimeMillis();
 		
 		ArrayList<String> queries = new ArrayList<String>();
-		for(int i = 0;i < 10000000; i++) {
+		for(int i = 0;i < 100000000; i++) {
 			queries.add("SELECT \"id\" FROM");
 		}
 		for(String query: queries) {
