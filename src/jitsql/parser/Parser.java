@@ -15,9 +15,6 @@ public class Parser {
 		// Convert to a char array for efficiency
 		//char[] cmd = reader.readLine().toCharArray();
 		
-		// We use a Trie to pattern match reserved words
-		Trie data = new Trie();
-		
 		// Hash table serves as a category reference
 		Hashtable<String, Integer> h = new Hashtable<String, Integer>();
 		
@@ -30,12 +27,7 @@ public class Parser {
 		h.put("WHERE", 3);
 		h.put("JEFE", Integer.MAX_VALUE);
 		h.put("STRING", 5);
-		// Add our vocab to Trie matcher
-		data.insert("SELECT");
-		data.insert("FROM");
-		data.insert("WHERE");
-		data.insert("JEFE");
-		
+
 		int start = 0;
 		int end = 0;
 		long startTime = System.currentTimeMillis();
@@ -87,7 +79,7 @@ public class Parser {
 							break;
 						}
 						// search for the string in the trie
-						if (data.search(build)) {
+						if (h.containsKey(build)) {
 							match = true;
 							// if we've found the string, add a new Tuple and stop looping
 							int type = h.get(build);
